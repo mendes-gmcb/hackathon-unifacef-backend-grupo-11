@@ -1,12 +1,31 @@
-import { Controller, Delete, Post } from "@overnightjs/core";
+import { Controller, Delete, Get, Post, Put } from "@overnightjs/core";
 import { Request, Response } from "express";
 import AuthService from "@src/services/authService";
 import { BaseController } from ".";
 import { UserContabil } from "@src/model/userContabil";
-import { request } from "http";
+
 
 @Controller("usersContabil")
 export class UsersContabilController extends BaseController {
+
+  @Post("get")
+  public async get(
+    req: Request,
+    res: Response
+  ): Promise<Response | undefined> {
+    // rota para pegar o id do usuário
+    const { cnpj } = req.body; 
+
+    const user = await UserContabil.findOne({ cnpj: cnpj });
+
+    if (!user) {
+      return res
+        .status(401)
+        .send({ code: 401, message: "Usuario não encontrado" });
+    }
+
+    return res.status(200).send({ user });
+  }
   // mesmo com necessidade de extender o extender o base Controller
   @Post("")
   public async create(req: Request, res: Response): Promise<void> {
@@ -23,10 +42,24 @@ export class UsersContabilController extends BaseController {
   @Delete("delete")
   public async delete(
     req: Request,
-  ): Promise<void> {
-    const { cnpj } = req.body;
+    res: Response
+  ): Promise<Response> {
+      const { cnpj } = req.body;
     const userContabil = await UserContabil.deleteOne({ cnpj: cnpj });
     console.log(userContabil)
+    return res.status(200).send({ cnpj: cnpj });
+  }
+
+  @Put("update/:id")
+  public async update(req: Request, res: Response): Promise<void> {
+    // rota para atualizar um usuário
+    try {
+      const { id } = req.params;
+      const userContabil = await UserContabil.findByIdAndUpdate(id, req.body);
+      res.status(201).send(userContabil);
+    } catch (e) {
+      this.sendCreateUpdateErrorResponse(res, e);
+    }
   }
 
   @Post("authenticate")
