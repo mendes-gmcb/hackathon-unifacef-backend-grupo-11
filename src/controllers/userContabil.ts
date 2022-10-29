@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import AuthService from "@src/services/authService";
 import { BaseController } from ".";
 import { UserContabil } from "@src/model/userContabil";
+import { request } from "http";
 
 @Controller("usersContabil")
 export class UsersContabilController extends BaseController {
@@ -22,8 +23,10 @@ export class UsersContabilController extends BaseController {
   @Delete("delete")
   public async delete(
     req: Request,
-    res: Response
   ): Promise<void> {
+    const { cnpj } = req.body;
+    const userContabil = await UserContabil.deleteOne({ cnpj: cnpj });
+    console.log(userContabil)
   }
 
   @Post("authenticate")
