@@ -15,7 +15,7 @@ export enum CUSTOM_VALIDATION {
   DUPLICATED = "DUPLICATED",
 }
 
-interface UserModel extends Omit<UserContabil, "_id">, Document {}
+interface UserContabilModel extends Omit<UserContabil, "_id">, Document {}
 
 const schema = new mongoose.Schema(
   {
@@ -25,6 +25,7 @@ const schema = new mongoose.Schema(
     cnpj: { type: String, required: true, unique: true },
     razao_social: { type: String, required: true },
     crc: { type: String, required: true },
+    active: { type: Number, required: true}
   },
   {
     toJSON: {
@@ -37,18 +38,17 @@ const schema = new mongoose.Schema(
   }
 );
 
-schema.path("email").validate(
-  async (email: string) => {
-    const emailCount = await mongoose.models.User.countDocuments({ email });
-    return !emailCount;
+schema.path("cnpj").validate(
+  async (cnpj: string) => {
+    const cnpjCount = await mongoose.models.UserContabil.countDocuments({ cnpj });
+    return !cnpjCount;
   },
   "already exists in the database.",
   CUSTOM_VALIDATION.DUPLICATED
 );
-// trás o erro da informação duplicada para a camada do mongoose
-// fazendo ele parar de retornar um erro diretamenta do MongoDB
 
-schema.pre<UserModel>("save", async function (): Promise<void> {
+
+schema.pre<UserContabilModel>("save", async function (): Promise<void> {
   if (!this.password || !this.isModified("password")) {
     return;
   }
@@ -58,8 +58,8 @@ schema.pre<UserModel>("save", async function (): Promise<void> {
     this.password = hashedPassword;
   } catch (err) {
     console.error(`Erro no hash do password do usuario ${this.name_repre}`);
-    // @TODO ERRO
+    
   }
 });
 
-export const UserContabil = mongoose.model<UserModel>("User", schema);
+export const UserContabil = mongoose.model<UserContabilModel>("UserContabil", schema);
