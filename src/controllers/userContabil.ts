@@ -44,7 +44,7 @@ export class UsersContabilController extends BaseController {
     req: Request,
     res: Response
   ): Promise<Response> {
-      const { cnpj } = req.body;
+    const { cnpj } = req.body;
     await UserContabil.deleteOne({ cnpj: cnpj });
     return res.status(200).send({ cnpj: cnpj });
   }
