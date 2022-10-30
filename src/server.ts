@@ -16,6 +16,7 @@ import * as database from "@src/database";
 
 import express, { Application } from "express";
 import cors from "cors";
+import bodyParser from 'body-parser'
 import { UsersController } from "./controllers/user";
 import { ItemControllers } from "./controllers/item";
 import { AccountController } from "./controllers/account";
@@ -26,6 +27,7 @@ import { UserAdminController } from "./controllers/userAdmin";
 export class SetupServer extends Server {
   constructor(private port = 3000) {
     super();
+    this.init();
     // por ser uma class extendida de outra class q tem um constructor
     // super()
   }
@@ -38,8 +40,12 @@ export class SetupServer extends Server {
   }
 
   private setupExpress(): void {
-    this.app.use(cors);
+    // this.app.use(express.urlencoded({ extended: false }))
     this.app.use(express.json());
+    this.app.use(cors({
+      origin: '*'
+    })); // aqui jaz o capeta
+    
     // seta que a "conversa" com o sistema vai ser feita em JSON
     // this.app.use(expressPino({ logger}))
   }

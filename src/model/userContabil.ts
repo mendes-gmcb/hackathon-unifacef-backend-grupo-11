@@ -3,12 +3,12 @@ import Authservice from "@src/services/authService";
 
 export interface UserContabil {
   _id?: string;
-  name_repre: string;
-  email: string;
-  password: string;
+  name_repre?: string;
+  email?: string;
+  password?: string;
   cnpj: string;
   razao_social: string;
-  crc: string;
+  crc?: string;
 }
 
 export enum CUSTOM_VALIDATION {
@@ -19,13 +19,13 @@ interface UserContabilModel extends Omit<UserContabil, "_id">, Document {}
 
 const schema = new mongoose.Schema(
   {
-    name_repre: { type: String, required: true },
-    email: { type: String, required: true},
-    password: { type: String, required: true },
-    cnpj: { type: String, required: true, unique: true },
+    name_repre: { type: String, required: false },
+    email: { type: String, required: false},
+    password: { type: String, required: false },
+    cnpj: { type: String, required: true },
     razao_social: { type: String, required: true },
-    crc: { type: String, required: true },
-    active: { type: Number, required: true}
+    crc: { type: String, required: false },
+    active: { type: Number, required: true, default: 1}
   },
   {
     toJSON: {

@@ -31,6 +31,8 @@ export class UsersContabilController extends BaseController {
   public async create(req: Request, res: Response): Promise<void> {
     // rota para criar novo usuario
     try {
+      req.body.cnpj = await req.body.cnpj.replace(/[^0-9]/g, "");
+
       const userContabil = new UserContabil(req.body);
       const newUser = await userContabil.save();
       res.status(201).send(newUser);
@@ -54,7 +56,20 @@ export class UsersContabilController extends BaseController {
     // rota para atualizar um usuário
     try {
       const { id } = req.params;
-      const userContabil = await UserContabil.findByIdAndUpdate(id, req.body);
+      const { name, password } = req.body;
+
+      if (password) {
+        try {
+          const hashedPassword = await AuthService.hashPassword(password);
+          req.body.password = hashedPassword;
+        } catch (err) {
+          console.error(`Erro no hash do password do usuario ${name}`);
+          // @TODO ERRO
+        }
+      }   
+
+      let userContabil = await UserContabil.findByIdAndUpdate(id, req.body);
+      userContabil.cnpj = userContabil.cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
       res.status(201).send(userContabil);
     } catch (e) {
       this.sendCreateUpdateErrorResponse(res, e);

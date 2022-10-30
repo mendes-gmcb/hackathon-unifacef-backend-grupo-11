@@ -49,17 +49,15 @@ export class UsersController extends BaseController {
       const { id } = req.params;
       const { name, password } = req.body;
 
-      if (!password) {
-        return;
-      }
-    
-      try {
-        const hashedPassword = await AuthService.hashPassword(password);
-        req.body.password = hashedPassword;
-      } catch (err) {
-        console.error(`Erro no hash do password do usuario ${name}`);
-        // @TODO ERRO
-      }
+      if (password) {
+        try {
+          const hashedPassword = await AuthService.hashPassword(password);
+          req.body.password = hashedPassword;
+        } catch (err) {
+          console.error(`Erro no hash do password do usuario ${name}`);
+          // @TODO ERRO
+        }
+      }    
 
       try {
         let user = await User.findByIdAndUpdate(id, req.body);

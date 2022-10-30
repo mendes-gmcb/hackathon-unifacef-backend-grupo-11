@@ -31,12 +31,12 @@ export class UserAdminController extends BaseController {
   public async create(req: Request, res: Response): Promise<void> {
     // rota para criar novo usuario
     try {
-      console.log(req.body)
       const userAdmin = new UserAdmin(req.body);
       const newUser = await userAdmin.save();
       res.status(201).send(newUser);
     } catch (e) {
       this.sendCreateUpdateErrorResponse(res, e);
+      // console.log(e);
     }
   }
 

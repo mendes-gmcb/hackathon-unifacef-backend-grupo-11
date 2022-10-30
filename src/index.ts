@@ -9,6 +9,6 @@ import { SetupServer } from "./server";
 
   // const port = process.env.PORT
   const server = new SetupServer();
-  server.init();
+  // server.init();
   server.start();
 })();
