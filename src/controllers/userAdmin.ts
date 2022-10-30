@@ -2,11 +2,11 @@ import { Controller, Delete, Get, Post, Put } from "@overnightjs/core";
 import { Request, Response } from "express";
 import AuthService from "@src/services/authService";
 import { BaseController } from ".";
-import { UserContabil } from "@src/model/userContabil";
+import { UserAdmin } from "@src/model/userAdmin";
 
 
-@Controller("usersContabil")
-export class UsersContabilController extends BaseController {
+@Controller("userAdmin")
+export class UserAdminController extends BaseController {
 
   @Get(":id")
   public async get(
@@ -16,7 +16,7 @@ export class UsersContabilController extends BaseController {
     // rota para pegar o id do usuário
     const { id } = req.params; 
     console.log(id)
-    const user = await UserContabil.findById(id);
+    const user = await UserAdmin.findById(id);
 
     if (!user) {
       return res
@@ -27,26 +27,27 @@ export class UsersContabilController extends BaseController {
     return res.status(200).send({ user });
   }
   // mesmo com necessidade de extender o extender o base Controller
-  @Post("")
+  @Post("/")
   public async create(req: Request, res: Response): Promise<void> {
     // rota para criar novo usuario
     try {
-      const userContabil = new UserContabil(req.body);
-      const newUser = await userContabil.save();
+      console.log(req.body)
+      const userAdmin = new UserAdmin(req.body);
+      const newUser = await userAdmin.save();
       res.status(201).send(newUser);
     } catch (e) {
       this.sendCreateUpdateErrorResponse(res, e);
     }
   }
 
-  @Delete("delete")
+  @Delete("delete/:id")
   public async delete(
     req: Request,
     res: Response
   ): Promise<Response> {
-      const { cnpj } = req.body;
-    await UserContabil.deleteOne({ cnpj: cnpj });
-    return res.status(200).send({ cnpj: cnpj });
+      const { id } = req.params;
+    await UserAdmin.deleteOne({ id: id });
+    return res.status(200).send({ id: id });
   }
 
   @Put("update/:id")
@@ -54,8 +55,8 @@ export class UsersContabilController extends BaseController {
     // rota para atualizar um usuário
     try {
       const { id } = req.params;
-      const userContabil = await UserContabil.findByIdAndUpdate(id, req.body);
-      res.status(201).send(userContabil);
+      const userAdmin = await UserAdmin.findByIdAndUpdate(id, req.body);
+      res.status(201).send(userAdmin);
     } catch (e) {
       this.sendCreateUpdateErrorResponse(res, e);
     }
@@ -66,15 +67,15 @@ export class UsersContabilController extends BaseController {
     req: Request,
     res: Response
   ): Promise<Response | undefined> {
-    const { cnpj, password } = req.body;
-    const user = await UserContabil.findOne({ cnpj: cnpj });
+    const { email, password } = req.body;
+    const user = await UserAdmin.findOne({ email: email });
     // caso exista o email retorna os dados
     // caso não null
 
     if (!user)
       return res
         .status(401)
-        .send({ code: 401, message: "CNPJ não encontrado" });
+        .send({ code: 401, message: "Email não encontrado" });
     // retorna usuario não encontrada caso não encontre a conta
     else if (!(await AuthService.comparePassword(password, user.password))) {
       return res.status(401).send({ code: 401, message: "senha não coincide" });

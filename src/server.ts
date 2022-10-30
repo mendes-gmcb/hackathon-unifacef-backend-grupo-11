@@ -20,6 +20,7 @@ import { ItemControllers } from "./controllers/item";
 import { AccountController } from "./controllers/account";
 import { TransactionsControllers } from "./controllers/transaction";
 import { UsersContabilController } from "./controllers/userContabil";
+import { UserAdminController } from "./controllers/userAdmin";
 
 export class SetupServer extends Server {
   constructor(private port = 3000) {
@@ -47,12 +48,14 @@ export class SetupServer extends Server {
     const accountController = new AccountController();
     const transactionController = new TransactionsControllers();
     const userContabilController = new UsersContabilController();
+    const userAdminController = new UserAdminController();
     this.addControllers([
       userController,
       itemController,
       accountController,
       transactionController,
       userContabilController,
+      userAdminController,
     ]);
     // jeito simples de setar os controllers nos sistemas
   }
