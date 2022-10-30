@@ -15,6 +15,7 @@ import * as database from "@src/database";
 // busca conexão do DB
 
 import express, { Application } from "express";
+import cors from "cors";
 import { UsersController } from "./controllers/user";
 import { ItemControllers } from "./controllers/item";
 import { AccountController } from "./controllers/account";
@@ -37,6 +38,7 @@ export class SetupServer extends Server {
   }
 
   private setupExpress(): void {
+    this.app.use(cors);
     this.app.use(express.json());
     // seta que a "conversa" com o sistema vai ser feita em JSON
     // this.app.use(expressPino({ logger}))
